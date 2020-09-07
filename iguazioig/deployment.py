@@ -8,7 +8,6 @@ def deploy(yaml_file=''):
     apiversion=project_graph['apiVersion']
     try:
         deploy_streams = "create_streams_%s(project_graph=project_graph)"% apiversion
-        print(deploy_streams)
         eval(deploy_streams)
     except:
         print("Failed to create streams")
@@ -27,7 +26,7 @@ def deploy(yaml_file=''):
 def create_streams_v1alpha1(project_graph=''):
     for stream in project_graph['project']['v3io_streams']:
         try:
-            client = v3f.Client("framesd:8081",container=stream['name'])
+            client = v3f.Client("framesd:8081",container=stream['container'])
             client.create("stream",
                       table=stream['path'],
                       shards=stream['shards'],
@@ -39,9 +38,10 @@ def create_streams_v1alpha1(project_graph=''):
 
 def _deploy_v1alpha1(project_graph=''):
     for function in project_graph['project']['functions']:
-        _create = composer.composer(project_graph['apiVersion'])
-        fn = _create.get_template(function['function_name'], project=project_graph['project']['name'])
-
+        fn = composer(project_graph['apiVersion'],
+                                    function['function_name'],
+                                    project=project_graph['project']['name'])
+        
         fn.with_http(workers=1).apply(mount_v3io())
 
         GPU = bool(function['gpu'])

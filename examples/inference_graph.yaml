@@ -52,12 +52,7 @@ project:
       container: bigdata
       shards: 16
       retention: 48
-      path: pipeline_streams/converge
-    - name: parallel_process
-      container: bigdata
-      shards: 16
-      retention: 48
-      path: pipeline_streams/parallel_process      
+      path: pipeline_streams/converge    
     functions:
     - function_name: step1
       input_stream: pipeline_streams/input_stream
