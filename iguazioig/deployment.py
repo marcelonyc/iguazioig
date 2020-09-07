@@ -28,7 +28,7 @@ def create_streams_v1alpha1(project_graph=''):
     for stream in project_graph['project']['v3io_streams']:
         try:
             client = v3f.Client("framesd:8081",container=stream['name'])
-            client.create(stream['name'],
+            client.create("stream",
                       table=stream['path'],
                       shards=stream['shards'],
                       retention_hours=stream['retention'],
