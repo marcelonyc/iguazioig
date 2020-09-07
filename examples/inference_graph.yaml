@@ -1,6 +1,6 @@
 apiVersion: v1alpha1
 project:
-    name: iguazio_inference_pipeline
+    name: iguazio-inference-pipeline
     # DEFAULT values for each function
     # include all in each function and overwrite where needed
     config_defaults: &config_defaults

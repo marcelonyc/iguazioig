@@ -102,7 +102,6 @@ class igz_stream_merge():
             self.call_counter.pop(PartitionKey)
         return message
     
-        def processing(self,context,message):
-            return_messasge = self.merge_rule_partitionkey(context,message)
-            
-            return return_message
+    def processing(self,context,message):
+        return_messasge = self.merge_rule_partitionkey(context,message)
+        return return_message
