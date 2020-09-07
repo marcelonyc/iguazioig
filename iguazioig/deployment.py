@@ -3,6 +3,8 @@ import v3io_frames as v3f
 from mlrun import code_to_function, mount_v3io, mlconf
 import os
 
+from iguazioig.composer import composer
+
 def deploy(yaml_file=''):
     project_graph = yaml.load(open(yaml_file,'rb'),Loader=yaml.FullLoader)
     apiversion=project_graph['apiVersion']

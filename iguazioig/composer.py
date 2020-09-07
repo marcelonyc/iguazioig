@@ -1,3 +1,6 @@
+import os
+from mlrun import code_to_function, mount_v3io
+
 def composer(apiversion='v1alpha1',name='',project='default'):
     """Run a task on function/code (.py, .ipynb or .yaml) locally,
     e.g.:
@@ -10,9 +13,8 @@ def composer(apiversion='v1alpha1',name='',project='default'):
     """
 
     import iguazioig
-    self.apiversion = apiversion
     _module_path = os.path.dirname(iguazioig.__file__)
-    templatefile = "%s/processing_template_%s"% (_module_path,apiversion)
+    templatefile = "%s/templates/processing_template_%s.ipynb"% (_module_path,apiversion)
 
     return code_to_function(name, project=project,
                          filename=templatefile, kind='nuclio')
