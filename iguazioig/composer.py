@@ -1,4 +1,4 @@
-def composer(apiversion=apiversion,name='',project='default'):
+def composer(apiversion='v1alpha1',name='',project='default'):
     """Run a task on function/code (.py, .ipynb or .yaml) locally,
     e.g.:
        # define template
