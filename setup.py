@@ -7,7 +7,7 @@ setuptools.setup(
     author="Marcelo Litovsky",
     author_email="marcelo.litovsky@gmail.com",
     install_requires=["mlrun>=0.5.1","v3io_frames","v3io"],
-    package_data={"": ["*.ipynb"]},
+    include_package_data = True
     description="Wrapper functions to build an inference pipeline in Iguazio",
     url="https://github.com/marcelonyc/iguazioig",
     packages=setuptools.find_packages(),
