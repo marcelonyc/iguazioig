@@ -5,7 +5,7 @@ import os
 
 from iguazioig.composer import composer 
 
-def create_streams_v1alpha1(project_graph=''):
+def create_streams_v2alpha1(project_graph=''):
     for stream in project_graph['project']['v3io_streams']:
         try:
             client = v3f.Client("framesd:8081",container=stream['container'])
@@ -18,7 +18,7 @@ def create_streams_v1alpha1(project_graph=''):
             print("Failed to create stream",stream)
             raise
 
-def _deploy_v1alpha1(project_graph=''):
+def _deploy_v2alpha1(project_graph=''):
     for function in project_graph['project']['functions']:
         fn = composer(project_graph['apiVersion'],
                                     function['function_name'],
