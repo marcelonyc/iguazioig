@@ -92,7 +92,7 @@ class igz_stream_merge():
             self.call_counter[PartitionKey] += 1
         else:
             self.call_counter[PartitionKey] = 1
-        print("MESSAGE COUNT",self.call_counter,context.worker_id,message['shard'])
+        #print("MESSAGE COUNT",self.call_counter,context.worker_id,message['shard'])
         
         if self.call_counter[PartitionKey] == 2:
             url = "http://v3io-webapi:8081/%s/%s.csv"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('STEP_NAME'))
@@ -113,5 +113,5 @@ class igz_stream_merge():
         return message
     
     def processing(self,context,message):
-        return_messasge = self.merge_rule_partition_key(context,message)
+        return_message = self.merge_rule_partition_key(context,message)
         return return_message
