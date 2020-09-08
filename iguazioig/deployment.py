@@ -4,6 +4,7 @@ from mlrun import code_to_function, mount_v3io, mlconf
 import os
 
 from iguazioig.composer import composer
+from iguazioig.apiv1alpha1 import create_streams_v1alpha1,_deploy_v1alpha1
 
 def deploy(yaml_file=''):
     project_graph = yaml.load(open(yaml_file,'rb'),Loader=yaml.FullLoader)
