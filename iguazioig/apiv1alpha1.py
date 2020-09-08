@@ -3,6 +3,8 @@ import v3io_frames as v3f
 from mlrun import code_to_function, mount_v3io, mlconf
 import os
 
+from iguazioig.composer import composer 
+
 def create_streams_v1alpha1(project_graph=''):
     for stream in project_graph['project']['v3io_streams']:
         try:
