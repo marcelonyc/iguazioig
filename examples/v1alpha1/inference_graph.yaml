@@ -64,7 +64,7 @@ project:
       <<: *stream_trigger_defaults
       <<: *env_defaults
       <<: *scaling_defaults
-    - function_name: type_classifier
+    - function_name: step2
       input_stream: pipeline_streams/step2
       class_load_function: iguazio_functions.igz_model
       processing_function: processing
