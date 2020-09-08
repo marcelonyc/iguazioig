@@ -60,7 +60,7 @@ class igz_model():
     
     def last_step(self,context,message):
         print(message)
-        open("/tmp/%s.json"%message['PrimaryKey'],'w').write(json.dumps(message))
+        open("/tmp/%s.json"%message['PartitionKey'],'w').write(json.dumps(message))
         return
     
 class igz_collector():
@@ -76,7 +76,9 @@ class igz_collector():
             self.call_counter[PartitionKey] += 1
         else:
             self.call_counter[PartitionKey] = 1
-        print("MESSAGE COUNT",self.call_counter,context.worker_id,message['shard'])
+        if self.call_counter[PartitionKey] >= 2:
+            print("MESSAGE COUNT",PartitionKey,self.call_counter[PartitionKey])
+            print("Running final step")
         return message
     
 class igz_stream_merge():
