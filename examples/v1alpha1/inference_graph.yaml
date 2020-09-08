@@ -5,6 +5,7 @@ project:
     # include all in each function and overwrite where needed
     config_defaults: &config_defaults
         gpu: False
+        num_gpus: 1
         docker_image: python:3.6-jessie
     scaling_defaults: &scaling_defaults
         minReplicas: 1
