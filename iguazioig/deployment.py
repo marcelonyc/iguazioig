@@ -24,4 +24,4 @@ def deploy(yaml_file=''):
         raise
 
     project = project_graph['project']['name']
-    print ("Project {project} Deployed")
+    print ("Project %s Deployed"% project)
