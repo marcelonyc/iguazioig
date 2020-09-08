@@ -117,3 +117,20 @@ class igz_stream_merge():
     def processing(self,context,message):
         return_message = self.merge_rule_partition_key(context,message)
         return return_message
+    
+    
+def append_to_file(context,message):
+    url = "http://v3io-webapi:8081/%s/%s_%s.csv"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('RESULTS_FILE'))
+    headers = {
+            "Content-Type": "application-octet-stream",
+            "X-v3io-session-key": os.getenv('V3IO_ACCESS_KEY'),
+            "Range": "-1"
+          }
+    payload = "%s\n"%(message)
+    try:
+        response = requests.put(url, data=payload, headers=headers)
+    except:
+        print("RESP",payload)
+        print("RESP",headers)
+        print("RESP",url)
+    pass
