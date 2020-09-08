@@ -29,7 +29,7 @@ def _deploy_v1alpha1(project_graph=''):
         GPU = bool(function['gpu'])
         if GPU:
             fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
-        fn.spec.build.commands = ['pip install requests']
+        fn.spec.build.commands = ['pip install v3io==0.4.0']
 
         fn.spec.min_replicas = function['minReplicas']
         fn.spec.max_replicas = function['maxReplicas']        
