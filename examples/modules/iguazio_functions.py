@@ -2,6 +2,7 @@ import os
 import base64
 import json
 import requests
+import json
 
 def igz_post_to_stream(context,message):
     Records=[]
@@ -48,10 +49,19 @@ def step_watcher(step,message):
 
 class igz_model():
     ## Fake placeholder model
-    
+    def __init__(self):
+        self.model = os.getenv('MODEL_PATH')
+        return
+        
     def processing(self,context,message):
+        print("MODEL PATH",self.model)
+        message['prediction'] = "H0"
         return message
     
+    def last_step(self,context,message):
+        print(message)
+        open("/tmp/%s.json"%message['PrimaryKey'],'w').write(json.dumps(message))
+        return
     
 class igz_collector():
     ## Fake placeholder model
