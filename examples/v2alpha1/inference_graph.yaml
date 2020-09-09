@@ -1,6 +1,6 @@
-apiVersion: v1alpha1
+apiVersion: v2alpha1
 project:
-    name: iguazio-inference-pipeline
+    name: iguazio-inference-pipeline-v2alpha1
     # DEFAULT values for each function
     # include all in each function and overwrite where needed
     config_defaults: &config_defaults
@@ -43,59 +43,40 @@ project:
       container: bigdata
       shards: 16
       retention: 48
-      path: pipeline_streams/input_stream
+      path: v2alpha1_streams/input_stream
     - name: step2
       container: bigdata  
       shards: 16
       retention: 48
-      path: pipeline_streams/step2
+      path: v2alpha1_streams/step2
     - name: converge
       container: bigdata
       shards: 16
       retention: 48
-      path: pipeline_streams/converge    
+      path: v2alpha1_streams/converge    
     functions:
     - function_name: step1
-      input_stream: pipeline_streams/input_stream
-      class_load_function: iguazio_functions.igz_model
-      processing_function: processing
-      output_stream: pipeline_streams/step2
-      <<: *config_defaults
-      <<: *stream_trigger_defaults
-      <<: *env_defaults
-      <<: *scaling_defaults
-    - function_name: step2
-      input_stream: pipeline_streams/step2
-      class_load_function: iguazio_functions.igz_model
-      processing_function: processing
-      output_stream: pipeline_streams/converge
-      <<: *config_defaults
-      <<: *stream_trigger_defaults
-      <<: *env_defaults
-      <<: *scaling_defaults
-    - function_name: step1-a
-      input_stream: pipeline_streams/input_stream
-      class_load_function: iguazio_functions.igz_collector
-      processing_function: processing
-      output_stream: pipeline_streams/converge
-      <<: *config_defaults
-      <<: *stream_trigger_defaults
-      <<: *env_defaults
-      <<: *scaling_defaults
-    - function_name: last-step
-      input_stream: pipeline_streams/converge
+      input_stream: v2alpha1_streams/input_stream
       class_load_function: iguazio_functions.igz_stream_merge
       processing_function: processing
-      output_stream: null
-      post_process_function: null
+      outputs:
+          - name: output_stream
+            kind: stream
+            output_stream: v2alpha1_streams/step2
+          - name: function
+            kind: function
+            post_process_function: iguazio_functions.append_to_file
+            condition: 'message[''category''] == ''category1'''
+          - name: rest
+            kind: http
+            url: https://my.webaddress.com
       <<: *config_defaults
       <<: *stream_trigger_defaults
       <<: *env_defaults
       <<: *scaling_defaults
-      # Default Overwrites
-      minReplicas: 2
-      maxReplicas: 2
-      maxWorkers: 1
       env_custom:
         - name: BATCH_RESULTS_FOLDER
           value: /bigdata/batch_results
+        - name: RESULTS_FILE
+          value: category1.json
+      # Default Overwrites
