@@ -44,12 +44,12 @@ project:
       shards: 16
       retention: 48
       path: pipeline_streams/input_stream
-    - name: type_classifier
+    - name: step2
       container: bigdata  
       shards: 16
       retention: 48
       path: pipeline_streams/step2
-    - name: outlier_detect
+    - name: converge
       container: bigdata
       shards: 16
       retention: 48

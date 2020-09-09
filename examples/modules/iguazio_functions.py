@@ -120,7 +120,7 @@ class igz_stream_merge():
     
     
 def append_to_file(context,message):
-    url = "http://v3io-webapi:8081/%s/%s_%s.csv"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('RESULTS_FILE'))
+    url = "http://v3io-webapi:8081/%s/%s.json"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('RESULTS_FILE'))
     headers = {
             "Content-Type": "application-octet-stream",
             "X-v3io-session-key": os.getenv('V3IO_ACCESS_KEY'),
