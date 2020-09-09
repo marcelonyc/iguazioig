@@ -2,6 +2,7 @@ import yaml
 import v3io_frames as v3f
 from mlrun import code_to_function, mount_v3io, mlconf
 import os
+import json
 
 from iguazioig.composer import composer 
 
