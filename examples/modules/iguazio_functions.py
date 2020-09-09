@@ -4,6 +4,8 @@ import json
 import requests
 import json
 
+from additional_modules import ExternalClass
+
 def igz_post_to_stream(context,message):
     Records=[]
     
@@ -120,6 +122,8 @@ class igz_stream_merge():
     
     
 def append_to_file(context,message):
+    ec = ExtraClass()
+    ec.invoke_ec(context,message)
     url = "http://v3io-webapi:8081/%s/%s.json"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('RESULTS_FILE'))
     headers = {
             "Content-Type": "application-octet-stream",
