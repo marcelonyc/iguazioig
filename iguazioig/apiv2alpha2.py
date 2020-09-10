@@ -32,7 +32,9 @@ def _deploy_v2alpha2(project_graph=''):
 
         fn.spec.min_replicas = function['minReplicas']
         fn.spec.max_replicas = function['maxReplicas']        
-
+        
+        GPU = bool(function['gpu'])
+        
         if GPU:
             fn.spec.base_spec['spec']['resources'] = {}
             fn.spec.base_spec['spec']['resources']['limits']={'nvidia.com/gpu' : function['num_gpus']}
