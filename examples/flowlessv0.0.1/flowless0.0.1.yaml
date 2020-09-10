@@ -1,0 +1,63 @@
+name: root
+apiVersion: flowlessv0.0.1
+states:
+- kind: task
+  name: ingest
+  class_name: module.class
+  next: step2_stream
+  resource: step1
+- kind: task
+  name: step2
+  class_name: module.class
+  next: step3
+  resource: step2
+  - kind: task
+    name: file_append
+    resource: file_append
+    parameters: 
+    - bigdata
+    - batch_results/file_out.json
+    - message
+start_at: ingest
+resources:
+  file_append:
+    kind: python_function
+    module: iguazio_functions
+    name: file_append
+    paramters:
+        - container
+        - path
+        - content
+  user_volume:
+    kind: volume
+    container: users
+    subPath: /marcelo
+    mountPath: /User
+  input_stream:
+    kind: v3ioStream
+    container: bigdata
+    path: flowlessv0.0.1/input_stream
+    shards: 16
+    retention: 48
+  step2_stream:
+    kind: v3iostream
+    container: bigdata
+    path: flowlessv0.0.1/input_stream
+    shards: 16
+    retention: 48
+  step1:
+    kind: nuclio
+    metadata:
+      name: step1
+    spec:
+      minReplicas: 1
+      maxReplicas: 1
+      triggers:
+         - resource: input_stream
+      volumes:
+         - resource: user_volume
+      env:
+        - type: value
+          name: NAME
+          value: "VALUE"
+default_resource: f1

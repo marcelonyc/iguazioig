@@ -1,0 +1,89 @@
+name: root
+apiVersion: flowlessv0.0.1
+states:
+- kind: task
+  name: ingest
+  class_name: T1Class
+  next: if
+- kind: choice
+  name: if
+  choices:
+  - condition: event.body==10
+    next: post-process
+  - condition: event.body==7
+    next: update-db
+  default: data-prep
+- kind: task
+  name: ingest
+  class_name: module.class
+  next: step2_stream
+  resource: step1
+- kind: task
+  name: step2
+  class_name: module.class
+  next: step3
+  resource: step2
+- kind: router
+  name: router
+  class_name: ParallelRouter
+  class_params:
+    executor: thread
+  next: post-process
+  routes:
+  - kind: task
+    name: m1
+    class_name: MClass
+    class_params:
+      z: 100
+  - kind: task
+    name: m2
+    class_name: MClass
+    class_params:
+      z: 200
+  - kind: task
+    name: m3
+    class_name: MClass
+    class_params:
+      z: 300
+start_at: ingest
+resources:
+  user_volume:
+    kind: volume
+    container: users
+    subPath: /marcelo
+    mountPath: /User
+  f2:
+    kind: function
+    url: http://localhost:5000
+  input_stream:
+    kind: v3ioStream
+    container: bigdata
+    path: flowlessv0.0.1/input_stream
+    shards: 16
+    retention: 48
+  step2_stream:
+    kind: v3iostream
+    container: bigdata
+    path: flowlessv0.0.1/input_stream
+    shards: 16
+    retention: 48
+  step1:
+    kind: nuclio
+    metadata:
+      name: step1
+    spec:
+      minReplicas: 1
+      maxReplicas: 1
+      triggers:
+         - resource: input_stream
+      volumes:
+         - resource: user_volume
+      env:
+        - type: value
+          name: NAME
+          value: "VALUE"
+           
+    
+      
+     
+default_resource: f1
