@@ -28,8 +28,8 @@ def _deploy_v2alpha1(project_graph=''):
         fn.with_http(workers=1).apply(mount_v3io())
 
         GPU = bool(function['gpu'])
-        if GPU:
-            fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
+        
+        fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
         fn.spec.build.commands = ['pip install v3io==0.4.0']
 
         fn.spec.min_replicas = function['minReplicas']
