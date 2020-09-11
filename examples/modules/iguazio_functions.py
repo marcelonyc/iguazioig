@@ -122,7 +122,7 @@ class igz_stream_merge():
     
     
 def append_to_file(context,message):
-    ec = ExtraClass()
+    ec = ExternalClass()
     ec.invoke_ec(context,message)
     url = "http://v3io-webapi:8081/%s/%s.json"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('RESULTS_FILE'))
     headers = {

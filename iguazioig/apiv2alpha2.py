@@ -72,8 +72,11 @@ def _deploy_v2alpha2(project_graph=''):
         if 'env_custom' in function:
             for env_var in function['env_custom']:
                 fn.set_env(env_var['name'],env_var['value'])
-
-        fn.apply(mount_v3io())
+                
+        # MOunt v3io volumes
+        if 'v3io_volumes' in project_graph['project']:
+            for volume in project_graph['project']['v3io_volumes']:
+                fn.apply(mount_v3io(name=volume['name'],))
 
         addr = fn.deploy(project=project_graph['project']['name'])
 
