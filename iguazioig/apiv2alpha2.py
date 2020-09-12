@@ -77,7 +77,7 @@ def _deploy_v2alpha2(project_graph=''):
         if 'v3io_volumes' in project_graph['project']:
             _volumes = project_graph['project']['v3io_volumes']
             for volume in _volumes.keys():
-                fn.apply(mount_v3io(name=_volumes[volume]['name'],remote=_volumes[volume]['remote'],mount_path=_volumes[volume]['mount_path']))
+                fn.apply(mount_v3io(name=volume,remote=_volumes[volume]['remote'],mount_path=_volumes[volume]['mount_path']))
 
         addr = fn.deploy(project=project_graph['project']['name'])
 
