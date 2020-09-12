@@ -28,7 +28,7 @@ def _deploy_v2alpha2(project_graph=''):
         #fn.with_http(workers=1)
 
         fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
-        fn.spec.build.commands = ['pip install v3io==0.4.0']
+        fn.spec.build.commands = ['pip install v3io==0.5.0']
 
         fn.spec.min_replicas = function['minReplicas']
         fn.spec.max_replicas = function['maxReplicas']        
