@@ -72,13 +72,23 @@ project:
           - name: output_stream
             kind: stream
             output_stream: v2alpha2_streams/step2
+      <<: *config_defaults
+      <<: *stream_trigger_defaults
+      <<: *env_defaults
+      <<: *scaling_defaults
+      # Default Overwrites
+    - function_name: step2
+      input_stream: v2alpha2_streams/step2
+      class_load_function: iguazio_functions.igz_stream_merge
+      processing_function: processing
+      outputs:
+          - name: output_stream
+            kind: stream
+            output_stream: v2alpha2_streams/step2
           - name: function
             kind: function
             post_process_function: iguazio_functions.append_to_file
             condition: 'message[''category''] == ''category1'''
-          - name: rest
-            kind: http
-            url: https://my.webaddress.com
       <<: *config_defaults
       <<: *stream_trigger_defaults
       <<: *env_defaults
@@ -88,4 +98,4 @@ project:
           value: /bigdata/batch_results
         - name: RESULTS_FILE
           value: category1.json
-      # Default Overwrites
+      # Default Overwrites      

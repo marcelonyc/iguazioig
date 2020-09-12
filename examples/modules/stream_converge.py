@@ -8,6 +8,7 @@ import v3io.dataplane
 import json
 import queue
 import threading
+import os
 
 
 # In[2]:
