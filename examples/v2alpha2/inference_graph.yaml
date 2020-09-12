@@ -56,7 +56,13 @@ project:
       container: bigdata
       shards: 16
       retention: 48
-      path: v2alpha2_streams/converge    
+      path: v2alpha2_streams/converge
+    v3io_volumes:
+      user-dir:
+         remote: users/marcelo
+         mount_path: /User
+         access_key: null
+         user: null      
     functions:
     - function_name: step1
       input_stream: v2alpha2_streams/input_stream
