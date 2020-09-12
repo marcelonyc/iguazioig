@@ -25,7 +25,7 @@ def _deploy_v2alpha2(project_graph=''):
                                     function['function_name'],
                                     project=project_graph['project']['name'])
         
-        fn.with_http(workers=1).apply(mount_v3io())
+        #fn.with_http(workers=1)
 
         fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
         fn.spec.build.commands = ['pip install v3io==0.4.0']
