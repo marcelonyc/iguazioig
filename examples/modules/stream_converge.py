@@ -147,19 +147,19 @@ class igz_stream_converge():
 # In[3]:
 
 
-import os
-import ast
-os.environ['CLASS_CONFIG'] = '{"container" : "bigdata", "table_path" : "stream_processing/stream_converge", "results_file" : "batch_results/manual.csv"}'
-os.environ['BATCH_RESULTS_FOLDER'] = 'bigdata/batch_results'
-os.environ['STEP_NAME'] = 'manual'
-new = igz_stream_converge()
+# import os
+# import ast
+# os.environ['CLASS_CONFIG'] = '{"container" : "bigdata", "table_path" : "stream_processing/stream_converge", "results_file" : "batch_results/manual.csv"}'
+# os.environ['BATCH_RESULTS_FOLDER'] = 'bigdata/batch_results'
+# os.environ['STEP_NAME'] = 'manual'
+# new = igz_stream_converge()
 
 
 # In[4]:
 
 
-context = ''
-new.merge_rule_partition_key(context,{'PartitionKey':'rwgethr', 'count':1})
+# context = ''
+# new.merge_rule_partition_key(context,{'PartitionKey':'rwgethr', 'count':1})
 
 
 # In[ ]:
