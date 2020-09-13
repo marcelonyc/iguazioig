@@ -23,6 +23,7 @@ class igz_stream_converge():
         self.v3io_client = v3io.dataplane.Client(max_connections=1)
         self._tbl_init()
         self.call_counter=self._counter_init()
+        self.messages_expected = 3
         
         self.add_queue = queue.Queue()
         self.add_thread_pool = self._create_add_thread_pool()
@@ -41,7 +42,11 @@ class igz_stream_converge():
         _counter_load={}
         for item in items:
             if 'PartitionKey' in item:
-                _counter_load[item['PartitionKey']]  = item['count']
+                _PartitionKey, _ = item['PartitionKey'].split('-')
+                if _PartitionKey not in _counter_load:
+                    _counter_load[_PartitionKey]  = 1
+                else:
+                    _counter_load[_PartitionKey]  += 1
 
         return _counter_load
     
@@ -52,7 +57,8 @@ class igz_stream_converge():
                               key='PartitionKey',
                               fields=[
                                   {'name': 'PartitionKey', 'type': 'string', 'nullable': False},
-                                  {'name': 'count', 'type': 'long', 'nullable': False}
+                                  {'name': 'count', 'type': 'long', 'nullable': False},
+                                  {'name' : 'messages', 'type' : 'blob', 'nullable' : True }
                           ])
         
     def _create_add_thread_pool(self):
@@ -91,15 +97,19 @@ class igz_stream_converge():
     def _put_item(self,event):
         self.v3io_client.kv.put(container=self.container,
                          table_path=self.table_path,
-                         key = event['PartitionKey'],
+                         key = event['PartitionKey'] + str(event['count']),
                          attributes={
-                             'PartitionKey': event['PartitionKey'],
+                             'PartitionKey': event['PartitionKey'] + str(event['count']),
                              'count': event['count'],
+                             'message' : event['message']
                          }) 
     def _delete_item(self,event):
-        self.v3io_client.kv.delete(container=self.container,
+        _msg_count = 1
+        while _msg_count <= self.messages_expected:
+            self.v3io_client.kv.delete(container=self.container,
                          table_path=self.table_path,
-                         key=event['PartitionKey'])
+                         key=event['PartitionKey'] + str(_msg_count))
+            _msg_count +=1
     
     def merge_rule_partition_key(self,context,message):
         PartitionKey = message['PartitionKey']
@@ -109,7 +119,7 @@ class igz_stream_converge():
             self.call_counter[PartitionKey] = 1
         #print("MESSAGE COUNT",self.call_counter,context.worker_id,message['shard'])
         
-        if self.call_counter[PartitionKey] == 2:
+        if self.call_counter[PartitionKey] == self.messages_expected:
             url = "http://v3io-webapi:8081/%s/%s.csv"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('STEP_NAME'))
             headers = {
                     "Content-Type": "application-octet-stream",
@@ -123,7 +133,7 @@ class igz_stream_converge():
                 print("RESP",payload)
                 print("RESP",headers)
                 print("RESP",url)
-            self.del_queue.put({'PartitionKey' : PartitionKey, 'count' : self.call_counter[PartitionKey] })
+            self.del_queue.put({'PartitionKey' : PartitionKey, 'count' : self.call_counter[PartitionKey], 'message' : message })
             self.call_counter.pop(PartitionKey)
         else:
             self.add_queue.put({'PartitionKey' : PartitionKey, 'count' : self.call_counter[PartitionKey] })
