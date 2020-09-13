@@ -18,7 +18,7 @@ import base64
 class igz_stream_converge():
     
     def __init__(self, **kwargs):
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self,key,value)
         self.v3io_client = v3io.dataplane.Client(max_connections=1)
         self._tbl_init()

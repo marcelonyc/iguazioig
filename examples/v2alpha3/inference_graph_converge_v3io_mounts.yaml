@@ -93,16 +93,16 @@ project:
       class_load_function: stream_converge_with_init.igz_stream_converge
       processing_function: processing
       # No outputs this function should handle the ouput
-      #outputs:
-      #    - name: saveit
-      #      kind: function
-      #      post_process_function: iguazio_functions.append_to_file
+      outputs:
+          - name: nothing
+            kind: http
+            url: test
       <<: *config_defaults
       <<: *stream_trigger_defaults
       <<: *env_defaults
       <<: *scaling_defaults
-      maxReplicas: 3
-      minReplicas: 3
+      maxReplicas: 1
+      minReplicas: 1
       maxWorkers: 1
       class_init:
           container: bigdata
