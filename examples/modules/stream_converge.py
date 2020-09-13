@@ -9,6 +9,7 @@ import json
 import queue
 import threading
 import os
+import base64
 
 
 # In[2]:
@@ -20,6 +21,7 @@ class igz_stream_converge():
         class_config = json.loads(os.getenv('CLASS_CONFIG'))
         self.container = class_config['container']
         self.table_path = class_config['table_path']
+        self.results_file = class_config['results_file']
         self.v3io_client = v3io.dataplane.Client(max_connections=1)
         self._tbl_init()
         self.call_counter=self._counter_init()
@@ -79,10 +81,11 @@ class igz_stream_converge():
         # Add entry to KV tables
         while True:
             event = self.add_queue.get()
-            try:
-                self._put_item(event)
-            except:
-                print("FAILED to write to KV")
+            #try:
+            if True:
+                print(self._put_item(event))
+            #except:
+            #    print("FAILED to write to KV")
     
     def _thread_entry_del(self):
         # Add entry to KV tables
@@ -95,20 +98,24 @@ class igz_stream_converge():
             #    print("FAILED to delete from KV")
                 
     def _put_item(self,event):
+        print("MESSAGE ",event['message'])
+        _key = event['PartitionKey'] + "-" + str(event['count'])
         self.v3io_client.kv.put(container=self.container,
                          table_path=self.table_path,
-                         key = event['PartitionKey'] + str(event['count']),
+                         key = _key,
                          attributes={
-                             'PartitionKey': event['PartitionKey'] + str(event['count']),
+                             'PartitionKey': _key,
                              'count': event['count'],
-                             'message' : event['message']
-                         }) 
+                             'message' : str(event['message'])
+                         })
+        
     def _delete_item(self,event):
         _msg_count = 1
         while _msg_count <= self.messages_expected:
+            _key = event['PartitionKey'] + "-" + str(_msg_count)
             self.v3io_client.kv.delete(container=self.container,
                          table_path=self.table_path,
-                         key=event['PartitionKey'] + str(_msg_count))
+                         key=_key)
             _msg_count +=1
     
     def merge_rule_partition_key(self,context,message):
@@ -120,45 +127,39 @@ class igz_stream_converge():
         #print("MESSAGE COUNT",self.call_counter,context.worker_id,message['shard'])
         
         if self.call_counter[PartitionKey] == self.messages_expected:
-            url = "http://v3io-webapi:8081/%s/%s.csv"% (os.getenv('BATCH_RESULTS_FOLDER'),os.getenv('STEP_NAME'))
-            headers = {
-                    "Content-Type": "application-octet-stream",
-                    "X-v3io-session-key": os.getenv('V3IO_ACCESS_KEY'),
-                    "Range": "-1"
-                  }
             payload = "%s\n"%(PartitionKey)
             try:
-                response = requests.put(url, data=payload, headers=headers)
+                self.v3io_client.object.put(self.container,self.results_file,body=payload,append=True)
             except:
                 print("RESP",payload)
-                print("RESP",headers)
-                print("RESP",url)
             self.del_queue.put({'PartitionKey' : PartitionKey, 'count' : self.call_counter[PartitionKey], 'message' : message })
             self.call_counter.pop(PartitionKey)
         else:
-            self.add_queue.put({'PartitionKey' : PartitionKey, 'count' : self.call_counter[PartitionKey] })
+            self.add_queue.put({'PartitionKey' : PartitionKey, 'count' : self.call_counter[PartitionKey], 'message' : message })
         return message
     
     def processing(self,context,message):
         return_message = self.merge_rule_partition_key(context,message)
         return return_message
     
-    
 
 
-# In[5]:
+# In[3]:
 
 
-"""
 import os
 import ast
-os.environ['CLASS_CONFIG'] = '{"container" : "bigdata", "table_path" : "stream_processing/stream_converge"}'
-
+os.environ['CLASS_CONFIG'] = '{"container" : "bigdata", "table_path" : "stream_processing/stream_converge", "results_file" : "batch_results/manual.csv"}'
+os.environ['BATCH_RESULTS_FOLDER'] = 'bigdata/batch_results'
+os.environ['STEP_NAME'] = 'manual'
 new = igz_stream_converge()
 
+
+# In[4]:
+
+
 context = ''
-new.merge_rule_partition_key(context,{'PartitionKey':'rwgerettthr', 'count':1})
-"""
+new.merge_rule_partition_key(context,{'PartitionKey':'rwgethr', 'count':1})
 
 
 # In[ ]:
