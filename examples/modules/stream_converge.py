@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding: utf-8
+# coding: utf~8
 
 # In[1]:
 
@@ -44,7 +44,7 @@ class igz_stream_converge():
         _counter_load={}
         for item in items:
             if 'PartitionKey' in item:
-                _PartitionKey, _ = item['PartitionKey'].split('-')
+                _PartitionKey, _ = item['PartitionKey'].split('~')
                 if _PartitionKey not in _counter_load:
                     _counter_load[_PartitionKey]  = 1
                 else:
@@ -99,7 +99,7 @@ class igz_stream_converge():
                 
     def _put_item(self,event):
         print("MESSAGE ",event['message'])
-        _key = event['PartitionKey'] + "-" + str(event['count'])
+        _key = event['PartitionKey'] + "~" + str(event['count'])
         self.v3io_client.kv.put(container=self.container,
                          table_path=self.table_path,
                          key = _key,
@@ -112,7 +112,7 @@ class igz_stream_converge():
     def _delete_item(self,event):
         _msg_count = 1
         while _msg_count <= self.messages_expected:
-            _key = event['PartitionKey'] + "-" + str(_msg_count)
+            _key = event['PartitionKey'] + "~" + str(_msg_count)
             self.v3io_client.kv.delete(container=self.container,
                          table_path=self.table_path,
                          key=_key)

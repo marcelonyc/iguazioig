@@ -88,10 +88,10 @@ project:
       class_load_function: stream_converge.igz_stream_converge
       processing_function: processing
       # No outputs this function should handle the ouput
-      #outputs:
-      #    - name: saveit
-      #      kind: function
-      #      post_process_function: iguazio_functions.append_to_file
+      outputs: 
+          - name: none
+            kind: http
+            ur: http://url.com
       <<: *config_defaults
       <<: *stream_trigger_defaults
       <<: *env_defaults
