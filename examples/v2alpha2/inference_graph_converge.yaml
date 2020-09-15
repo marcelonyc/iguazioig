@@ -23,6 +23,7 @@ project:
         # the module is taken from the string "module"."function"
         import_modules: 
              - iguazio_functions
+             - stream_converge
         # Function to execute by handler
         # must me in class_load_function
         # The function must take 2 parameters context(Nuclio context) and message(dictionary)
@@ -76,19 +77,20 @@ project:
       <<: *stream_trigger_defaults
       <<: *env_defaults
       <<: *scaling_defaults
+      env_custom:
+        - name: BATCH_RESULTS_FOLDER
+          value: /bigdata/batch_results
+        - name: RESULTS_FILE
+          value: category1.json
       # Default Overwrites
-    - function_name: step2
+    - function_name: stream_converge
       input_stream: v2alpha2_streams/step2
-      class_load_function: iguazio_functions.igz_stream_merge
+      class_load_function: stream_converge.igz_stream_converge
       processing_function: processing
       outputs:
-          - name: output_stream
-            kind: stream
-            output_stream: v2alpha2_streams/step2
-          - name: function
+          - name: saveit
             kind: function
             post_process_function: iguazio_functions.append_to_file
-            condition: 'message[''category''] == ''category1'''
       <<: *config_defaults
       <<: *stream_trigger_defaults
       <<: *env_defaults
@@ -98,4 +100,6 @@ project:
           value: /bigdata/batch_results
         - name: RESULTS_FILE
           value: category1.json
-      # Default Overwrites      
+        - name: CLASS_CONFIG
+          value: '{"container" : "bigdata", "table_path" : "stream_processing/stream_converge"}'
+      # Default Overwrites

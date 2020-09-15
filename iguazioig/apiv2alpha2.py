@@ -25,10 +25,10 @@ def _deploy_v2alpha2(project_graph=''):
                                     function['function_name'],
                                     project=project_graph['project']['name'])
         
-        fn.with_http(workers=1).apply(mount_v3io())
+        #fn.with_http(workers=1)
 
         fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
-        fn.spec.build.commands = ['pip install v3io==0.4.0']
+        fn.spec.build.commands = ['pip install v3io==0.5.0']
 
         fn.spec.min_replicas = function['minReplicas']
         fn.spec.max_replicas = function['maxReplicas']        
@@ -72,8 +72,12 @@ def _deploy_v2alpha2(project_graph=''):
         if 'env_custom' in function:
             for env_var in function['env_custom']:
                 fn.set_env(env_var['name'],env_var['value'])
-
-        fn.apply(mount_v3io())
+                
+        # MOunt v3io volumes
+        if 'v3io_volumes' in project_graph['project']:
+            _volumes = project_graph['project']['v3io_volumes']
+            for volume in _volumes.keys():
+                fn.apply(mount_v3io(name=volume,remote=_volumes[volume]['remote'],mount_path=_volumes[volume]['mount_path']))
 
         addr = fn.deploy(project=project_graph['project']['name'])
 
