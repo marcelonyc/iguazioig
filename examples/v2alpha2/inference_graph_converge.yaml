@@ -87,19 +87,19 @@ project:
       input_stream: v2alpha2_streams/step2
       class_load_function: stream_converge.igz_stream_converge
       processing_function: processing
-      outputs:
-          - name: saveit
-            kind: function
-            post_process_function: iguazio_functions.append_to_file
+      # No outputs this function should handle the ouput
+      outputs: 
+          - name: none
+            kind: http
+            ur: http://url.com
       <<: *config_defaults
       <<: *stream_trigger_defaults
       <<: *env_defaults
       <<: *scaling_defaults
+      maxReplicas: 3
+      minReplicas: 3
+      maxWorkers: 1
       env_custom:
-        - name: BATCH_RESULTS_FOLDER
-          value: /bigdata/batch_results
-        - name: RESULTS_FILE
-          value: category1.json
         - name: CLASS_CONFIG
-          value: '{"container" : "bigdata", "table_path" : "stream_processing/stream_converge"}'
+          value: '{"container" : "bigdata", "table_path" : "stream_processing/stream_converge", "results_file" : "batch_results/manual.csv"}'
       # Default Overwrites
