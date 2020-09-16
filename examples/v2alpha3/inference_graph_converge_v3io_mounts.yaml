@@ -1,0 +1,121 @@
+apiVersion: v2alpha3
+project:
+    name: iguazio-inference-pipeline-v2alpha3
+    # DEFAULT values for each function
+    # include all in each function and overwrite where needed
+    config_defaults: &config_defaults
+        gpu: False
+        num_gpus: 1
+        docker_image: python:3.6-jessie
+    scaling_defaults: &scaling_defaults
+        minReplicas: 1
+        maxReplicas: 1
+    stream_trigger_defaults: &stream_trigger_defaults
+        maxWorkers: 16
+    env_defaults: &env_defaults
+        input_stream_container: bigdata
+        output_stream_container: bigdata
+        module_paths: 
+             - /User/modules
+             - /User/iguazioig/examples/modules
+        # The template uses importlib to import the modules listed
+        # When specifying functions from the modules on post_processing_function and class_load_function,
+        # the module is taken from the string "module"."function"
+        import_modules: 
+             - iguazio_functions
+             - stream_converge_with_init
+        # Function to execute by handler
+        # must me in class_load_function
+        # The function must take 2 parameters context(Nuclio context) and message(dictionary)
+        processing_function: null
+        # This call is loaded in init_context.
+        # the processing_function must be in this class
+        class_load_function: null
+        # Use this function to do something after posting to 
+        # output stream or if the step does not post to a stream
+        # For example: the last step in the inference pipeline
+        # This function must accept 2 parameters context(Nuclio context) and message(dictionary)
+        post_process_function: null  
+    env_custom: &env_custom
+        # List Any variables that need to be set in the environment 
+        # Add to your function as:
+        # env_custom:
+        #     - name: name
+        #       value: value
+    v3io_streams:
+    - name: input_stream
+      container: bigdata
+      shards: 16
+      retention: 48
+      path: v2alpha3_streams/input_stream
+    - name: step2
+      container: bigdata  
+      shards: 16
+      retention: 48
+      path: v2alpha3_streams/step2
+    - name: converge
+      container: bigdata
+      shards: 16
+      retention: 48
+      path: v2alpha3_streams/converge
+    v3io_volumes:
+      user-dir:
+         remote: users/marcelo
+         mount_path: /User
+         access_key: null
+         user: null    
+      v3io-dir:
+         remote: bigdata/
+         mount_path: /v3io/bigdata
+         access_key: null
+         user: null          
+    functions:
+    - function_name: step1
+      input_stream: v2alpha3_streams/input_stream
+      class_load_function: iguazio_functions.igz_stream_merge
+      processing_function: processing
+      outputs:
+          - name: output_stream
+            kind: stream
+            output_stream: v2alpha3_streams/step2
+      <<: *config_defaults
+      <<: *stream_trigger_defaults
+      <<: *env_defaults
+      <<: *scaling_defaults
+      env_custom:
+        - name: BATCH_RESULTS_FOLDER
+          value: /bigdata/batch_results
+        - name: RESULTS_FILE
+          value: category1.json
+      # Default Overwrites
+    - function_name: stream_converge
+      input_stream: v2alpha3_streams/step2
+      class_load_function: stream_converge_with_init.igz_stream_converge
+      processing_function: processing
+      # No outputs this function should handle the ouput
+      outputs:
+          - name: nothing
+            kind: http
+            url: test
+      <<: *config_defaults
+      <<: *stream_trigger_defaults
+      <<: *env_defaults
+      <<: *scaling_defaults
+      maxReplicas: 1
+      minReplicas: 1
+      maxWorkers: 1
+      class_init:
+          container: bigdata
+          table_path: stream_processing/stream_converge_alpha3
+          results_file: batch_results/v2alpha3.csv
+          some_list:
+              - 1
+              - 2
+              - 3
+          a_boolean: True
+         # Above is presented to class **kwargs as:
+         #{'container': 'bigdata',
+         #'table_path': 'stream_processing/stream_converge',
+         #'results_file': 'batch_results/manual.csv',
+         #'some_list': [1, 2, 3],
+         #'a_boolean': True}
