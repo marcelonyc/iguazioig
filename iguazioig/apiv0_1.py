@@ -44,35 +44,35 @@ def _deploy_v0_1(project_graph=''):
         consumer_group=function['function_name'].replace('-','_')
         #consumer_group='inferencegrp'
 
-        
-        for stream in function['input_streams']:
-            stream_name = stream['stream']
-            _container = project_graph['project']['v3io_streams'][stream_name]['container']
-            _stream_path = project_graph['project']['v3io_streams'][stream_name]['path']
-            _maxWorkers = project_graph['project']['v3io_streams'][stream_name]['maxWorkers']
+        _input_streams = function['input_streams']
+        for _stream in _input_streams.keys():
+            _container = project_graph['project']['v3io_streams'][_stream]['container']
+            _stream_path = project_graph['project']['v3io_streams'][_stream]['path']
+            
+            _maxWorkers = _input_streams[_stream]['maxWorkers']
             try:
-                _v3io_access_key = project_graph['project']['v3io_streams'][stream_name]['v3io_access_key']
+                _v3io_access_key = _input_streams[_stream]['v3io_access_key']
             except:
                 print("Using default v3io_access_key from environment")
             else:     
                 _v3io_access_key = os.getenv('V3IO_ACCESS_KEY')
                 
             try: 
-                _pollingIntervalMs = _v3io_access_key = project_graph['project']['v3io_streams'][stream_name]['pollingIntervalMs']
+                _pollingIntervalMs = _v3io_access_key = _input_streams[_stream]['pollingIntervalMs']
             except:
                 print('Using default pollingIntervalMs')
             else:
                 _pollingIntervalMs = 500
                 
             try:
-                _seekTo = _v3io_access_key = project_graph['project']['v3io_streams'][stream_name]['seekTo']
+                _seekTo = _v3io_access_key = _input_streams[_stream]['seekTo']
             except:
                 print('Using default seek to latest')
             else:
                 _seekTo = 'latest'
                 
             try:
-                _readBatchSize  = project_graph['project']['v3io_streams'][stream_name]['readBatchSize']
+                _readBatchSize  = _input_streams[_stream]['readBatchSize']
             except:
                 print('Using default readBatchSize 100')
             else:

@@ -70,11 +70,11 @@ project:
     functions:
     - function_name: step1
       input_streams:
-         - stream: input_stream
-           pollingIntervalMs: 500
-           seekTo: latest
-           readBatchSize: 100
-           maxWorkers: 1
+        input_stream:   ### MUST MATCH THE NAME OF A STREAM DEFINED ^^^
+          pollingIntervalMs: 500
+          seekTo: latest
+          readBatchSize: 100
+          maxWorkers: 1
       class_load_function: iguazio_functions.igz_stream_merge
       processing_function: processing
       outputs:
@@ -92,12 +92,12 @@ project:
       # Default Overwrites
     - function_name: stream_converge
       input_streams:
-         - stream: input_stream
+         input_stream:
            pollingIntervalMs: 500
            seekTo: latest
            readBatchSize: 100
            maxWorkers: 1
-         - stream: step2
+         step2:
            pollingIntervalMs: 500
            seekTo: latest
            readBatchSize: 100   
