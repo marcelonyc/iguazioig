@@ -44,7 +44,6 @@ def _deploy_v0_1(project_graph=''):
         consumer_group=function['function_name'].replace('-','_')
         #consumer_group='inferencegrp'
 
-        maxWorkers = function['maxWorkers']
         
         for stream in function['input_streams']:
             stream_name = stream['stream']
