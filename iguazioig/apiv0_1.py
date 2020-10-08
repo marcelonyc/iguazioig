@@ -41,7 +41,6 @@ def _deploy_v0_1(project_graph=''):
             fn.spec.base_spec['spec']['resources']['limits']={'nvidia.com/gpu' : function['num_gpus']}
 
         fn.set_env('V3IO_ACCESS_KEY',os.getenv('V3IO_ACCESS_KEY'))
-        INPUT_STREAM = function['input_stream']
         consumer_group=function['function_name'].replace('-','_')
         #consumer_group='inferencegrp'
 
