@@ -65,7 +65,7 @@ def _deploy_v0_1(project_graph=''):
                 _pollingIntervalMs = 500
                 
             try:
-                _seekTo = _v3io_access_key = _input_streams[_stream]['seekTo']
+                _seekTo = _input_streams[_stream]['seekTo']
             except:
                 print('Using default seek to latest')
             else:
