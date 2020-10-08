@@ -81,7 +81,7 @@ def _deploy_v0_1(project_graph=''):
                   'kind': 'v3ioStream',
                   'url' : "http://%s/%s/%s"% ('v3io-webapi:8081',_container,f'{_stream_path}@{consumer_group}'),
                 "password": _v3io_access_key,  
-                "maxWorkers" : maxWorkers,
+                "maxWorkers" : _maxWorkers,
                 'attributes': {"pollingIntervalMs": _pollingIntervalMs,
                     "seekTo": _seekTo,
                     "readBatchSize": _readBatchSize,
