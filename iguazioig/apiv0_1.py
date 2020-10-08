@@ -58,7 +58,7 @@ def _deploy_v0_1(project_graph=''):
                 _v3io_access_key = os.getenv('V3IO_ACCESS_KEY')
                 
             try: 
-                _pollingIntervalMs = _v3io_access_key = _input_streams[_stream]['pollingIntervalMs']
+                _pollingIntervalMs = _input_streams[_stream]['pollingIntervalMs']
             except:
                 print('Using default pollingIntervalMs')
             else:
