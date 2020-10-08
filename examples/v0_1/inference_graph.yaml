@@ -82,7 +82,6 @@ project:
             kind: stream
             output_stream: v0_1_streams/step2
       <<: *config_defaults
-      <<: *stream_trigger_defaults
       <<: *env_defaults
       <<: *scaling_defaults
       env_custom:
@@ -111,7 +110,6 @@ project:
             kind: http
             url: test
       <<: *config_defaults
-      <<: *stream_trigger_defaults
       <<: *env_defaults
       <<: *scaling_defaults
       maxReplicas: 1

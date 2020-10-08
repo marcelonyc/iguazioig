@@ -7,13 +7,14 @@ import json
 from iguazioig.composer import composer 
 
 def create_streams_v0_1(project_graph=''):
-    for stream in project_graph['project']['v3io_streams']:
+    _streams  =  project_graph['project']['v3io_streams']
+    for stream in _streams.keys():
         try:
-            client = v3f.Client("framesd:8081",container=stream['container'])
+            client = v3f.Client("framesd:8081",container=_streams[stream]['container'])
             client.create("stream",
-                      table=stream['path'],
-                      shards=stream['shards'],
-                      retention_hours=stream['retention'],
+                      table=_streams[stream]['path'],
+                      shards=_streams[stream]['shards'],
+                      retention_hours=_streams[stream]['retention'],
                       if_exists=0)
         except:
             print("Failed to create stream",stream)
