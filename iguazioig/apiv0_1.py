@@ -85,7 +85,7 @@ def _deploy_v0_1(project_graph=''):
                     "readBatchSize": _readBatchSize,
                   }
                 }
-            fn.add_trigger('input-stream',trigger_spec)
+            fn.add_trigger(_stream,trigger_spec)
 
         # These should in your Yaml
         _step_config = {}
