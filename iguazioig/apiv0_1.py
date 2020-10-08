@@ -50,33 +50,31 @@ def _deploy_v0_1(project_graph=''):
             _stream_path = project_graph['project']['v3io_streams'][_stream]['path']
             
             _maxWorkers = _input_streams[_stream]['maxWorkers']
+            
             try:
                 _v3io_access_key = _input_streams[_stream]['v3io_access_key']
             except:
                 print("Using default v3io_access_key from environment")
-            else:     
                 _v3io_access_key = os.getenv('V3IO_ACCESS_KEY')
                 
             try: 
                 _pollingIntervalMs = _input_streams[_stream]['pollingIntervalMs']
             except:
                 print('Using default pollingIntervalMs')
-            else:
                 _pollingIntervalMs = 500
                 
             try:
                 _seekTo = _input_streams[_stream]['seekTo']
             except:
                 print('Using default seek to latest')
-            else:
                 _seekTo = 'latest'
                 
             try:
                 _readBatchSize  = _input_streams[_stream]['readBatchSize']
             except:
                 print('Using default readBatchSize 100')
-            else:
                 _readBatchSize = 100
+                
             trigger_spec={
                   'kind': 'v3ioStream',
                   'url' : "http://%s/%s/%s"% ('v3io-webapi:8081',_container,f'{_stream_path}@{consumer_group}'),
