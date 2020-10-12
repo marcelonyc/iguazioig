@@ -7,6 +7,8 @@ project:
         gpu: False
         num_gpus: 1
         docker_image: python:3.6-jessie
+        loggerSinks:
+            - level: error
     scaling_defaults: &scaling_defaults
         minReplicas: 6
         maxReplicas: 6

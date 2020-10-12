@@ -110,7 +110,10 @@ def _deploy_v0_1(project_graph=''):
          
         if 'class_init' in function:
             fn.set_env("CLASS_INIT",json.dumps(function['class_init'])) 
-                
+        
+        if 'loggerSinks' in function:
+            fn.spec.base_spec['spec']['loggerSinks'] = function['loggerSinks']
+            
         addr = fn.deploy(project=project_graph['project']['name'])
 
 
