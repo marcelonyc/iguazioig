@@ -86,6 +86,9 @@ project:
       <<: *config_defaults
       <<: *env_defaults
       <<: *scaling_defaults
+      pip:
+        - nuclio-jupyter
+        - dataclasses
       env_custom:
         - name: BATCH_RESULTS_FOLDER
           value: /bigdata/batch_results

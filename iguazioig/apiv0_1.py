@@ -1,24 +1,36 @@
 import yaml
 import v3io_frames as v3f
+from typing import Dict, List
 from mlrun import code_to_function, mount_v3io, mlconf
 import os
 import json
 
-from iguazioig.composer import composer 
+from iguazioig.composer import composer
+
 
 def create_streams_v0_1(project_graph=''):
-    _streams  =  project_graph['project']['v3io_streams']
+    _streams = project_graph['project']['v3io_streams']
     for stream in _streams.keys():
         try:
             client = v3f.Client("framesd:8081",container=_streams[stream]['container'])
             client.create("stream",
-                      table=_streams[stream]['path'],
-                      shards=_streams[stream]['shards'],
-                      retention_hours=_streams[stream]['retention'],
-                      if_exists=0)
+                          table=_streams[stream]['path'],
+                          shards=_streams[stream]['shards'],
+                          retention_hours=_streams[stream]['retention'],
+                          if_exists=0)
         except:
-            print("Failed to create stream",stream)
+            print("Failed to create stream", stream)
             raise
+
+
+def format_pip_libraries(function: Dict) -> List[str]:
+    """Adds user specified pip libraries to a string for function build commands"""
+    pip_libraries = function['pip'] if 'pip' in function else []
+    pip_libraries = [library for library in pip_libraries if 'v3io==' not in library]
+    pip_libraries.append('v3io==0.5.0')
+    pip_libraries = ' '.join(pip_libraries)
+    return [f'pip install {pip_libraries}']
+
 
 def _deploy_v0_1(project_graph=''):
     for function in project_graph['project']['functions']:
@@ -29,7 +41,8 @@ def _deploy_v0_1(project_graph=''):
         #fn.with_http(workers=1)
 
         fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
-        fn.spec.build.commands = ['pip install v3io==0.5.0']
+
+        fn.spec.build.commands = format_pip_libraries(function)
 
         fn.spec.min_replicas = function['minReplicas']
         fn.spec.max_replicas = function['maxReplicas']        
