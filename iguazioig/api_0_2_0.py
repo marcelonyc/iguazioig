@@ -34,8 +34,8 @@ class Deployer(BaseDeployer):
 
         super().__init__()
 
-        self.template = str(Path(__file__).parent.absolute() / 'templates' / 'processing_template_0_2_0.py')
         self.api_version = '0.2.0'
+        self.template = str(Path(__file__).parent.absolute() / 'templates' / 'processing_template_0_2_0.py')
         self.inference_graph = self._read_inference_graph(inference_graph)
 
         ig_api = self.inference_graph['apiVersion']
@@ -53,7 +53,18 @@ class Deployer(BaseDeployer):
 
     @staticmethod
     def _format_pip_libraries(function: Dict) -> List[str]:
-        """Adds user specified pip libraries to a string for function build commands"""
+        """
+        Adds user specified pip libraries to a string for function build commands
+
+        Parameters
+        ----------
+        function: dict
+            Function spec which includes a key pip - technically optional, if pip not found then empty list is used
+
+        Returns
+        -------
+        List containing the pip install string
+        """
         pip_libraries = function['pip'] if 'pip' in function else []
         pip_libraries = [library for library in pip_libraries if 'v3io==' not in library]
         pip_libraries.append('v3io==0.5.0')
