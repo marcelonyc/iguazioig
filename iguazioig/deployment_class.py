@@ -55,6 +55,8 @@ class Deployment:
         None or str
         """
 
+        credentials = None
+
         if recreate_data and credentials_path is None:
             raise Exception('Recreating data requires function deletion first - specify a path to credentials')
         elif recreate_data:
