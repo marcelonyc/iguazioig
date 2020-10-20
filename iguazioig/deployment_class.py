@@ -48,7 +48,7 @@ class Deployment:
         dry_run: bool, optional
             Boolean indicating if the deployment should describe the deployment plan rather than deploy
         credentials_path: str or pathlib.Path, optional
-            Path to a yaml file with two fields: user_name and password with iguazio credentials to delete functions
+            Path to a yaml file with two fields: username and password with iguazio credentials to delete functions
 
         Returns
         -------
