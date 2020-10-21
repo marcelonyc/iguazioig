@@ -18,4 +18,4 @@ def test_api_020_inference_graph_loads():
     deployment = Deployment('0.2.0')
     deployed = deployment.deploy(inference_graph=inference_graph, dry_run=True)
 
-    assert type(deployed) is list
+    assert type(deployed) is dict

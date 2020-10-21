@@ -46,6 +46,7 @@ please look under tests/utils/api020/inference_graph.yml.
 A few things to note when using:
 
 * You must specify a class module and class name
+* Your class init must accept the key word "logger"
 * You must specify a list of methods (at least one) to be called on your 
   class sequentially (output of previous method is input to next)
 * Arbitrary class init may be specified for a class 
@@ -67,5 +68,5 @@ then add it under the templates directory. Critically, deployers do work externa
 currently exist in the base_deployer module, and others can easily be made by subclassing from the abstract base
 class DeployerClient. Where appropriate, doc strings were added only to the base class.
 
-Mor testing needs to be added, as there is only one real test right now. When testing, it is recommended to specify
-dry run and use the returned list of commands to verify functionality.
+More testing needs to be added, as there is only one real test right now. When testing, it is recommended to specify
+dry run and use the returned dict of commands to verify functionality.

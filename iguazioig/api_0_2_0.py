@@ -113,6 +113,7 @@ class Deployer(BaseDeployer):
             function_name = self._sluggify_name(function['name'])
             function_tag = function.get('tag', 'latest')
             function_log_level = function.get('log_level', 'debug')
+
             fn = code_to_function(name=function_name,
                                   tag=function_tag,
                                   project=self.project_name,
@@ -129,13 +130,20 @@ class Deployer(BaseDeployer):
 
             # Build Vars
             fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
-            fn.spec.build.commands = self._format_pip_libraries(function)
+            fn.spec.base_spec['spec']['build']['Commands'] = self._format_pip_libraries(function)
 
+            # Scale and Resources
             fn.spec.min_replicas = function['min_replicas']
             fn.spec.max_replicas = function['max_replicas']
 
-            if bool(function.get('gpu', False)):
-                fn.spec.base_spec['spec']['resources'].update({'limits': {'nvidia.com/gpu': function['num_gpus']}})
+            resources = function.get('resources', {})
+            # the following allows for any of these to be missing in the yaml
+            requests = {resource: resources.get('requests', {}).get(resource, None) for resource in ['cpu', 'memory']}
+            limits = {resource: resources.get('limits', {}).get(resource, None) for resource in ['cpu', 'memory']}
+            gpu_limit = resources.get('limits', {}).get('nvidia.com/gpu', None)
+            if gpu_limit is not None:
+                limits.update({'nvidia.com/gpu': gpu_limit})
+            fn.set_config('spec.resources', {"requests": requests, "limits": limits})
 
             # Input Stream Triggers
             input_streams = function.get('input_streams', {})
