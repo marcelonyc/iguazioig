@@ -156,7 +156,7 @@ class Deployer(BaseDeployer):
 
                 v3io_key = trigger_spec.get('v3io_access_key', os.getenv('V3IO_ACCESS_KEY'))
                 polling_interval = trigger_spec.get('polling_interval_ms', 500)
-                seek_to = trigger_spec.get('seek_to', 'latest')
+                seek_to = trigger_spec.get('seek_to', 'earliest')
                 read_batch_size = trigger_spec.get('read_batch_size', 100)
 
                 trigger_spec = {
