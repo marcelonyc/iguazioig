@@ -1,7 +1,7 @@
 import os
 import yaml
 from pathlib import Path
-from typing import Union, List
+from typing import Union, List, Dict, Any
 
 from iguazioig.api_0_2_0 import Deployer as Deployer0_2_0
 
@@ -33,7 +33,7 @@ class Deployment:
                dry_run: bool = False,
                credentials_path: Union[str, Path] = None,
                *args,
-               **kwargs) -> Union[None, str]:
+               **kwargs) -> Union[None, Dict[str, Any]]:
         """
         Deploys inference graph from yaml specification
 
@@ -52,7 +52,7 @@ class Deployment:
 
         Returns
         -------
-        None or str
+        None or dict from DryRunClient
         """
 
         credentials = None

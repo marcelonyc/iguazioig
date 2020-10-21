@@ -5,8 +5,6 @@ project:
   # DEFAULT values for each function
   # include all in each function and overwrite where needed
   config_defaults: &config_defaults
-    gpu: False
-    num_gpus: 1
     docker_image: python:3.6-jessie
     log_level: error
   scaling_defaults: &scaling_defaults
@@ -79,12 +77,22 @@ project:
       env_custom:
         BATCH_RESULTS_FOLDER: /bigdata/batch_results
         RESULTS_FILE: category1.json
+      resources:
+        requests:
+          cpu: 1
+          memory: 128M
+        limits:
+          cpu: 2
+          nvidia.com/gpu: 1
+          memory: 256M
+
 
 
     - name: stream_converge
       <<: *config_defaults
       <<: *env_defaults
       <<: *scaling_defaults
+      function_image_name: stream-converger
       input_streams:
         input_stream:
           max_workers: 1

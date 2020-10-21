@@ -176,7 +176,9 @@ def init_context(context: nuclio.Context):
 
     try:
         class_ = getattr(importlib.import_module(config['class_module']), config['class_name'])
-        instance = class_(**config.get('class_init', {}))
+        class_init = config.get('class_init', {})
+        class_init['logger'] = context.logger
+        instance = class_(**class_init)
     except Exception as e:
         context.logger.error(f'Class init failed for {config["class_module"]}.{config["class_name"]} '
                              f'with error {e}')

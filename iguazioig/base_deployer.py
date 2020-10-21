@@ -250,7 +250,7 @@ class IguazioClient(DeployerClient):
 
     def create_function(self, name: str, project_name: str, mlrun_function) -> None:
         try:
-            address = mlrun_function.deploy(project=project_name)
+            address = mlrun_function.deploy()
             print(f'Function {name} was deployed into project {project_name} at {address}')
         except Exception as e:
             raise Exception(f'Function {name} failed to deploy with error: {e}')
@@ -280,37 +280,48 @@ class DryRunClient(DeployerClient):
 
     def __init__(self, credentials: Union[Dict[str, str], None]):
         _ = credentials
-        self.dry_run = []
+        self.dry_run = {'streams': {'delete': {}, 'create': {}},
+                        'functions': {'delete': {}, 'create': {}},
+                        'ordered': []}
 
-    def add_command(self, command: str) -> None:
-        print(command)
-        self.dry_run.append(command)
+    def _add_command(self, cmd: Dict, action: str, kind: str):
+        """
+        Helper for adding commands to the dry run attribute and printing out
+
+        Parameters
+        ----------
+        cmd: dict
+            Dictionary of keys important for creation or deletion
+        action: str
+            Create or delete
+        kind:
+            Stream or function
+
+        Returns
+        -------
+        None
+        """
+
+        human_readable = f'{action.title()} {kind} {cmd}'
+        print(human_readable)
+
+        self.dry_run.get(f'{kind}s').get(action).update(cmd)
+        self.dry_run.get('ordered').append(human_readable)
 
     def create_stream(self, stream_name: str, stream_spec: Dict) -> None:
 
-        cmd = (f'Create stream {stream_name} - '
-               f'container: {stream_spec["container"]} '
-               f'path: {stream_spec["path"]} '
-               f'shards: {stream_spec["shards"]} '
-               f'retention: {stream_spec["retention"]}')
-
-        self.add_command(cmd)
+        cmd = {stream_name: stream_spec}
+        self._add_command(cmd, 'create', 'stream')
 
     def delete_stream(self, stream_name: str, stream_spec: Dict) -> None:
-
-        cmd = (f'Delete stream {stream_name} - '
-               f'container: {stream_spec["container"]} '
-               f'path: {stream_spec["path"]} '
-               f'shards: {stream_spec["shards"]} '
-               f'retention: {stream_spec["retention"]}')
-
-        self.add_command(cmd)
+        cmd = {stream_name: stream_spec}
+        self._add_command(cmd, 'delete', 'stream')
 
     def create_function(self, name: str, project_name: str, mlrun_function) -> None:
 
-        cmd = f'Create function {name} in project {project_name} - {mlrun_function.to_dict()}'
-        self.add_command(cmd)
+        cmd = {name: {'project': project_name, 'mlrun_spec': mlrun_function.to_dict()}}
+        self._add_command(cmd, 'create', 'function')
 
     def delete_function(self, name: str, project_name: str) -> None:
-        cmd = f'Delete function {name} in project {project_name}'
-        self.add_command(cmd)
+        cmd = {name: {'project': project_name}}
+        self._add_command(cmd, 'delete', 'function')
