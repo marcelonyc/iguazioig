@@ -52,7 +52,7 @@ def _deploy_v2alpha3(project_graph=''):
             "password": os.getenv('V3IO_ACCESS_KEY'),  
             "maxWorkers" : maxWorkers,
             'attributes': {"pollingIntervalMs": 500,
-                "seekTo": "latest",
+                "seekTo": "earliest",
                 "readBatchSize": 100,
               }
             }
