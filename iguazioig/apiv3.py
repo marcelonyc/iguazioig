@@ -9,7 +9,7 @@ from iguazioig.composer import composer
 def create_streams_v3(project_graph=''):
     for stream in project_graph['project']['v3io_streams']:
         try:
-            client = v3f.Client("framesd:8081",container=stream['container'])
+            client = v3f.Client(os.getenv('V3IO_FRAMESD',"framesd:8081"),container=stream['container'])
             client.create("stream",
                       table=stream['path'],
                       shards=stream['shards'],
