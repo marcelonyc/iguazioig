@@ -28,7 +28,7 @@ def _deploy_v3(project_graph=''):
         #fn.with_http(workers=1)
 
         fn.spec.base_spec['spec']['build']['baseImage'] = function['docker_image']
-        fn.spec.build.commands = ['pip install v3io==0.5.0']
+        fn.spec.build.commands = ['pip install v3io==0.5.7']
 
         fn.spec.min_replicas = function['minReplicas']
         fn.spec.max_replicas = function['maxReplicas']        
@@ -67,7 +67,8 @@ def _deploy_v3(project_graph=''):
         _step_config['STEP_NAME'] = function['function_name']
         _step_config['OUTPUT_STREAM_CONTAINER'] = function['output_stream_container']
         _step_config['OUTPUTS'] = function['outputs']
-        
+        _step_config['UNIQUE_KEY'] = function['unique_key']
+         
         fn.set_env("STEP_CONFIG", json.dumps(_step_config))
         if 'env_custom' in function:
             for env_var in function['env_custom']:
