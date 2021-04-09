@@ -38,6 +38,14 @@ def _deploy_v3(project_graph=''):
         if GPU:
             fn.spec.base_spec['spec']['resources'] = {}
             fn.spec.base_spec['spec']['resources']['limits']={'nvidia.com/gpu' : function['num_gpus']}
+            
+        # Debug Level
+        if 'log_level' in function:
+            log_level = {'level': function['log_level']}
+        else:
+            log_level = {'level': 'info'}
+            
+        fn.spec.base_spec['spec']['loggerSinks'] = log_level
 
         fn.set_env('V3IO_ACCESS_KEY',os.getenv('V3IO_ACCESS_KEY'))
         INPUT_STREAM = function['input_stream']
