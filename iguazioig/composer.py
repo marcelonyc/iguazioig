@@ -2,7 +2,7 @@ import os
 from mlrun import code_to_function
 
 
-def composer(apiversion='v1alpha1', name='', project='default'):
+def composer(apiversion='v3', name='', project='iguazioig'):
     """Run a task on function/code (.py, .ipynb or .yaml) locally,
     e.g.:
        # define template
@@ -16,12 +16,9 @@ def composer(apiversion='v1alpha1', name='', project='default'):
     import iguazioig
     _module_path = os.path.dirname(iguazioig.__file__)
 
-    try:
-        template_file = "%s/templates/processing_template_%s.py" % (
-            _module_path, apiversion)
-    except:
-        template_file = "%s/templates/processing_template_%s.ipynb" % (
-            _module_path, apiversion)
+    template_file = f"{_module_path}/templates/processing_template_{apiversion}.py"
+    if not os.path.isfile(template_file):
+        template_file = f"{_module_path}/templates/processing_template_{apiversion}.ipynb"
 
     return code_to_function(name, project=project,
                             filename=template_file, kind='nuclio')
